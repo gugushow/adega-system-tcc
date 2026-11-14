@@ -1,0 +1,57 @@
+# Sistema completo para produção: MySQL + API + frontend (nginx).
+#
+# Uso (veja "Deploy" no README):
+#   cp .env.prod.example .env.prod      # e troque TODOS os valores
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# Nenhum segredo fica neste arquivo: tudo vem do .env.prod, que não vai para o Git.
+# O nome do projeto separa este ambiente do banco de desenvolvimento (adega-mysql na porta 3307).
+name: adega-prod
+
+services:
+  mysql:
+    image: mysql:9.7.2
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?defina MYSQL_ROOT_PASSWORD no .env.prod}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?defina MYSQL_DATABASE no .env.prod}
+      MYSQL_USER: ${MYSQL_USER:?defina MYSQL_USER no .env.prod}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?defina MYSQL_PASSWORD no .env.prod}
+    # Sem "ports": o banco só é acessível pela rede interna do Docker (pela API), nunca de fora.
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend/src/AdegaSystem.Api
+    restart: unless-stopped
+    # Só sobe depois que o MySQL responde, para as migrations não falharem na primeira vez.
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # A API fica atrás do nginx: lê o IP real do cliente e o protocolo original dos cabeçalhos X-Forwarded-*.
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      ConnectionStrings__DefaultConnection: "Server=mysql;Port=3306;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
+      Jwt__Secret: ${JWT_SECRET:?defina JWT_SECRET no .env.prod (32+ caracteres)}
+      # Usada só na primeira subida, enquanto o admin não tem senha. Depois a senha é trocada pela tela.
+      Admin__InitialPassword: ${ADMIN_INITIAL_PASSWORD:?defina ADMIN_INITIAL_PASSWORD no .env.prod}
+      # Aplica as migrations pendentes ao subir (banco novo ou versão nova do sistema).
+      Database__MigrateOnStartup: "true"
+    # Sem "ports": a API só recebe chamadas pelo nginx.
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${APP_PORT:-8080}:80"
+
+volumes:
+  mysql-data:

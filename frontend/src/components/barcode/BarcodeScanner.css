@@ -1,0 +1,59 @@
+/* Leitor de código de barras pela câmera (BarcodeScanner / BarcodeScannerModal). */
+
+.barcode-scanner-viewport {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  max-height: 60vh;
+  margin-inline: auto;
+  border-radius: var(--radius);
+  background: #000; /* fundo do vídeo: preto nos dois temas */
+}
+
+.barcode-scanner-viewport[hidden] {
+  display: none;
+}
+
+.barcode-scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Faixa horizontal que mostra onde posicionar o código. Só decoração. */
+.barcode-scanner-guide {
+  position: absolute;
+  inset: 35% 10%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35);
+}
+
+.barcode-scanner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #fff;
+}
+
+.barcode-scanner-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* Aberto por cima de outro modal (ex.: formulário de produto): fica na frente dele e do fundo dele. */
+.barcode-scanner-modal {
+  z-index: 1065;
+}
+
+.barcode-scanner-backdrop {
+  z-index: 1060;
+}

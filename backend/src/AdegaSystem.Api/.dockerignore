@@ -1,0 +1,5 @@
+# Saídas de build e arquivos locais não entram na imagem (o build acontece dentro do Docker).
+bin/
+obj/
+*.user
+appsettings.*.local.json

@@ -1,0 +1,90 @@
+# Ambiente de DEMONSTRAÇÃO completo: MySQL + carga demo + API + frontend (nginx).
+#
+# Uso (veja docs/DEMO-DOCKER.md):
+#   cp .env.demo.example .env.demo      # e preencha os valores
+#   docker compose -f docker-compose.demo.yml --env-file .env.demo build     # uma vez, com internet
+#   docker compose -f docker-compose.demo.yml --env-file .env.demo up -d     # sobe (funciona sem internet)
+#
+# Totalmente separado da produção: outro nome de projeto (adega-demo × adega-prod), outro MySQL,
+# outro volume, outra rede e outra porta. O docker-compose.prod.yml não é lido nem alterado.
+# A carga usa o "seed-demo" que já existe na API, com todas as travas dele (só Development, só no
+# banco adega_demo, só em banco vazio). Nenhum segredo fica neste arquivo: tudo vem do .env.demo.
+name: adega-demo
+
+# Mesma imagem para a carga (seed) e para a API: o código da demo já vai compilado na imagem da API.
+# "pull_policy: never": a imagem é construída aqui e nunca procurada num registro, então o "up" não
+# precisa de internet depois do primeiro build.
+x-api-image: &api-image
+  build: ./backend/src/AdegaSystem.Api
+  image: adega-demo-api:local
+  pull_policy: never
+
+services:
+  mysql:
+    image: mysql:9.7.2
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?defina MYSQL_ROOT_PASSWORD no .env.demo}
+      # Nome fixo: as travas da demo só aceitam um banco chamado exatamente adega_demo.
+      # Criado assim, o usuário "adega" já recebe permissão nele (sem GRANT manual).
+      MYSQL_DATABASE: adega_demo
+      MYSQL_USER: adega
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?defina MYSQL_PASSWORD no .env.demo}
+    # Sem "ports": o banco só é acessível pela rede interna do Docker.
+    volumes:
+      - mysql-data:/var/lib/mysql
+    # Testa pela rede (TCP) e com o usuário da API, não só um "ping": na primeira subida o MySQL roda um
+    # servidor temporário sem rede para criar o banco e depois reinicia. Um ping pelo socket responderia
+    # nesse intervalo, e a carga tentaria conectar enquanto o servidor ainda está reiniciando.
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -uadega -p\"$$MYSQL_PASSWORD\" -e \"SELECT 1\" adega_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  # Roda o "seed-demo" uma vez e encerra: aplica as migrations no adega_demo, define a senha do admin e
+  # carrega os dados. Se o banco já tem os dados, não altera nada e termina com sucesso.
+  seed:
+    <<: *api-image
+    restart: "no"
+    command: ["seed-demo"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Os comandos da demo só funcionam em Development (ver Data/DemoData/DemoDatabase.cs).
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DemoConnection: "Server=mysql;Port=3306;Database=adega_demo;User=adega;Password=${MYSQL_PASSWORD};"
+      DemoData__Password: ${DEMO_USERS_PASSWORD:?defina DEMO_USERS_PASSWORD no .env.demo}
+      Admin__InitialPassword: ${ADMIN_INITIAL_PASSWORD:?defina ADMIN_INITIAL_PASSWORD no .env.demo}
+
+  api:
+    <<: *api-image
+    restart: unless-stopped
+    command: ["use-demo"]
+    # Só sobe depois que a carga terminou com sucesso. Se a carga falhar, a API não sobe.
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # A API fica atrás do nginx: lê o IP real do cliente dos cabeçalhos X-Forwarded-*.
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      ConnectionStrings__DemoConnection: "Server=mysql;Port=3306;Database=adega_demo;User=adega;Password=${MYSQL_PASSWORD};"
+      Jwt__Secret: ${JWT_SECRET:?defina JWT_SECRET no .env.demo (32+ caracteres)}
+    # Sem "ports": a API só recebe chamadas pelo nginx (o Swagger do Development não fica acessível).
+
+  web:
+    build: ./frontend
+    image: adega-demo-web:local
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      - api
+    # Só no próprio computador (127.0.0.1): outros aparelhos da rede não acessam a demo.
+    ports:
+      - "127.0.0.1:${DEMO_PORT:-8081}:80"
+
+volumes:
+  mysql-data:

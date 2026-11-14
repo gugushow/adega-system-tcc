@@ -1,0 +1,217 @@
+/*
+ * Tokens de cor e de forma: o ÚNICO lugar com valores de cor do sistema.
+ *
+ * Cada token tem um valor para o tema claro e outro para o escuro. O ThemeProvider (src/theme) só troca
+ * o atributo data-bs-theme do <html>; o navegador recalcula todas as variáveis e a tela muda inteira,
+ * sem recarregar e sem nenhum componente saber qual tema está ativo.
+ *
+ * Na parte de baixo, os tokens alimentam as variáveis do próprio Bootstrap (--bs-*), então botões,
+ * campos, cartões, modais, tabelas e alertas do React Bootstrap seguem o tema sem mudar as telas.
+ * Contraste conferido (WCAG AA): texto normal ≥ 4,5:1 e texto secundário ≥ 4,5:1 nos dois temas.
+ */
+
+:root,
+[data-bs-theme='light'] {
+  /* Fundos e superfícies */
+  --bg-primary: #f4f5f7; /* fundo da página */
+  --bg-secondary: #eceef1; /* campos desabilitados, áreas de apoio */
+  --surface: #ffffff; /* cartões, modais, campos, menus */
+  --surface-hover: #f5f6f8;
+  --surface-muted: #f8f9fa; /* cabeçalho de tabela, rótulos de campo agrupado */
+  --border-color: #e3e6ea;
+  --border-strong: #cfd4da; /* borda de campos */
+
+  /* Texto */
+  --text-primary: #1d2127;
+  --text-secondary: #5c6470;
+  --text-muted: #6b7280;
+
+  /* Marca (vinho) */
+  --primary: #7b1e3a;
+  --primary-rgb: 123, 30, 58;
+  --primary-hover: #651830;
+  --primary-active: #521327;
+  --primary-text: #7b1e3a; /* links e textos na cor da marca */
+  --primary-text-rgb: 123, 30, 58;
+  --primary-subtle: #f6e7ec;
+  --primary-border-subtle: #e6bfcb;
+
+  /* Estados (texto escuro sobre fundo suave, para selos e alertas) */
+  --success: #1a7f4b;
+  --success-rgb: 26, 127, 75;
+  --success-hover: #14663c;
+  --success-text: #14633a;
+  --success-subtle: #e6f4ec;
+  --success-border-subtle: #b9dfc9;
+  --warning: #b45309;
+  --warning-rgb: 180, 83, 9;
+  --warning-text: #8a4106;
+  --warning-subtle: #fdf3e2;
+  --warning-border-subtle: #f3d3a2;
+  --danger: #c0362c;
+  --danger-rgb: 192, 54, 44;
+  --danger-hover: #a12d25;
+  --danger-text: #9b2a22;
+  --danger-subtle: #fbe9e7;
+  --danger-border-subtle: #f1c0ba;
+  --info: #1f6fb2;
+  --info-rgb: 31, 111, 178;
+  --info-text: #185a91;
+  --info-subtle: #e7f1fa;
+  --info-border-subtle: #bcd8f0;
+  --neutral-text: #3f4650;
+  --neutral-subtle: #eef0f3;
+
+  /* Menu lateral: escuro nos dois temas, como a maioria dos sistemas administrativos */
+  --sidebar-bg: #1e1b21;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: rgba(255, 255, 255, 0.72);
+  --sidebar-text-strong: #ffffff;
+  --sidebar-muted: rgba(255, 255, 255, 0.5);
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+  --sidebar-active: #7b1e3a;
+
+  /* Gráficos (validados para daltonismo nos dois fundos; ver components/charts/chartTheme.ts) */
+  --chart-series-1: #2a78d6;
+  --chart-series-2: #eb6834;
+  --chart-grid: #e6e8eb;
+  --chart-axis: #5c6470;
+  --chart-cursor: rgba(15, 23, 42, 0.05);
+
+  /* Forma */
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 6px 16px rgba(16, 24, 40, 0.1);
+  --focus-ring: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.3);
+  --focus-outline: #7b1e3a;
+  --focus-border: #b35a75;
+}
+
+[data-bs-theme='dark'] {
+  --bg-primary: #111317;
+  --bg-secondary: #16191e;
+  --surface: #1a1d23;
+  --surface-hover: #22262d;
+  --surface-muted: #1f2329;
+  --border-color: #2c3139;
+  --border-strong: #3a404a;
+
+  --text-primary: #e6e8eb;
+  --text-secondary: #a3a9b3;
+  --text-muted: #8b929c;
+
+  /* O vinho do claro fica escuro demais aqui: botões usam um tom mais vivo e textos um rosa claro. */
+  --primary: #a33356;
+  --primary-rgb: 163, 51, 86;
+  --primary-hover: #b23b60;
+  --primary-active: #8f2b4b;
+  --primary-text: #f09bb0;
+  --primary-text-rgb: 240, 155, 176;
+  --primary-subtle: #3a1a25;
+  --primary-border-subtle: #6b2a3e;
+
+  --success: #23864f;
+  --success-rgb: 76, 195, 138;
+  --success-hover: #2a9a5c;
+  --success-text: #6fd39b;
+  --success-subtle: #15301f;
+  --success-border-subtle: #24573a;
+  --warning: #d9822b;
+  --warning-rgb: 242, 183, 102;
+  --warning-text: #f2b766;
+  --warning-subtle: #3a2814;
+  --warning-border-subtle: #6b4a20;
+  --danger: #c0362c;
+  --danger-rgb: 239, 107, 94;
+  --danger-hover: #d14b3f;
+  --danger-text: #f29a90;
+  --danger-subtle: #3d1b18;
+  --danger-border-subtle: #6e2f29;
+  --info: #4a9be0;
+  --info-rgb: 74, 155, 224;
+  --info-text: #8cc3f2;
+  --info-subtle: #16283a;
+  --info-border-subtle: #2b4d6e;
+  --neutral-text: #c9ced6;
+  --neutral-subtle: #262a31;
+
+  --sidebar-bg: #0d0f12;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-active: #a33356;
+
+  --chart-series-1: #3d8ae6;
+  --chart-series-2: #e06a38;
+  --chart-grid: #2c3139;
+  --chart-axis: #a3a9b3;
+  --chart-cursor: rgba(255, 255, 255, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
+  --focus-outline: #f09bb0;
+  /* No escuro o anel precisa de mais força para aparecer. */
+  --focus-ring: 0 0 0 0.2rem rgba(240, 155, 176, 0.35);
+  --focus-border: #f09bb0;
+}
+
+/* Os tokens alimentam o Bootstrap. Vale para os dois temas (as variáveis já trazem o valor certo). */
+:root,
+[data-bs-theme] {
+  --bs-body-bg: var(--surface);
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-color: var(--text-primary);
+  --bs-heading-color: var(--text-primary);
+  --bs-emphasis-color: var(--text-primary);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-secondary-bg: var(--bg-secondary);
+  --bs-tertiary-bg: var(--surface-muted);
+  --bs-border-color: var(--border-color);
+  --bs-border-color-translucent: var(--border-color);
+
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb);
+  --bs-primary-text-emphasis: var(--primary-text);
+  --bs-primary-bg-subtle: var(--primary-subtle);
+  --bs-primary-border-subtle: var(--primary-border-subtle);
+  --bs-success-rgb: var(--success-rgb);
+  --bs-success-text-emphasis: var(--success-text);
+  --bs-success-bg-subtle: var(--success-subtle);
+  --bs-success-border-subtle: var(--success-border-subtle);
+  --bs-warning-rgb: var(--warning-rgb);
+  --bs-warning-text-emphasis: var(--warning-text);
+  --bs-warning-bg-subtle: var(--warning-subtle);
+  --bs-warning-border-subtle: var(--warning-border-subtle);
+  --bs-danger-rgb: var(--danger-rgb);
+  --bs-danger-text-emphasis: var(--danger-text);
+  --bs-danger-bg-subtle: var(--danger-subtle);
+  --bs-danger-border-subtle: var(--danger-border-subtle);
+  --bs-info-rgb: var(--info-rgb);
+  --bs-info-text-emphasis: var(--info-text);
+  --bs-info-bg-subtle: var(--info-subtle);
+  --bs-info-border-subtle: var(--info-border-subtle);
+  --bs-secondary-text-emphasis: var(--neutral-text);
+  --bs-secondary-bg-subtle: var(--neutral-subtle);
+  --bs-secondary-border-subtle: var(--border-color);
+
+  --bs-link-color: var(--primary-text);
+  --bs-link-color-rgb: var(--primary-text-rgb);
+  --bs-link-hover-color: var(--primary-text);
+  --bs-link-hover-color-rgb: var(--primary-text-rgb);
+  --bs-focus-ring-color: rgba(var(--primary-rgb), 0.3);
+  --bs-form-invalid-color: var(--danger-text);
+  --bs-form-invalid-border-color: var(--danger);
+  --bs-form-valid-color: var(--success-text);
+  --bs-form-valid-border-color: var(--success);
+
+  --bs-border-radius: var(--radius);
+  --bs-border-radius-sm: var(--radius-sm);
+  --bs-border-radius-lg: var(--radius-lg);
+  --bs-box-shadow-sm: var(--shadow-sm);
+  --bs-box-shadow: var(--shadow-md);
+}
+
+[data-bs-theme='dark'] {
+  --bs-body-bg-rgb: 26, 29, 35;
+}

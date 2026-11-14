@@ -1,0 +1,56 @@
+/* Consulta rápida de produto (ProductQuickViewModal): preço e estoque grandes, legíveis no celular. */
+
+.quick-view-highlights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.quick-view-highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.quick-view-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.quick-view-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.quick-view-details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+  row-gap: 0.35rem;
+}
+
+.quick-view-details dt {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.quick-view-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.quick-view-batches li {
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.quick-view-batches li:last-child {
+  border-bottom: 0;
+}

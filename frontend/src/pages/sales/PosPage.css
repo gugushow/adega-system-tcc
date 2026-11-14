@@ -1,0 +1,152 @@
+/* PDV: busca em destaque, carrinho preso na tela (desktop) e total grande perto do botão de finalizar. */
+
+.pos-shortcuts {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+kbd {
+  padding: 0.1rem 0.35rem;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.btn kbd {
+  color: inherit;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.pos-search .form-control {
+  font-size: 1.05rem;
+}
+
+.pos-catalog .list-group-item {
+  padding-block: 0.65rem;
+}
+
+.pos-catalog .min-w-0 {
+  min-width: 0;
+  flex: 1;
+}
+
+.pos-add-icon {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  transition: color 0.15s ease;
+}
+
+.pos-catalog .list-group-item-action:hover .pos-add-icon,
+.pos-catalog .list-group-item-action:focus-visible .pos-add-icon {
+  color: var(--primary-text);
+}
+
+.pos-catalog .list-group-item.disabled .pos-add-icon {
+  visibility: hidden;
+}
+
+.pos-cart {
+  display: flex;
+  flex-direction: column;
+}
+
+.pos-section {
+  padding-top: 0.9rem;
+  margin-top: 0.9rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pos-cart-body > .pos-section:first-child,
+.pos-cart-body > .state-message + .pos-section {
+  margin-top: 0;
+}
+
+.pos-cart-body > .state-message {
+  padding-block: 1.25rem;
+}
+
+/* Botões de quantidade maiores: bons para tela de toque (tablet). */
+.pos-qty {
+  width: 132px;
+}
+
+.pos-qty .btn {
+  min-width: 2.25rem;
+}
+
+.pos-qty .form-control {
+  text-align: center;
+  padding-inline: 0.25rem;
+}
+
+.pos-remove.btn {
+  color: var(--danger-text);
+  padding: 0.25rem 0.4rem;
+  border-radius: var(--radius-sm);
+}
+
+.pos-remove.btn:hover,
+.pos-remove.btn:focus-visible {
+  color: var(--danger-text);
+  background-color: var(--danger-subtle);
+}
+
+/* Em tela estreita "Cartão de crédito" quebra em duas linhas em vez de ser cortado. */
+.pos-payment.btn {
+  height: 100%;
+  line-height: 1.25;
+}
+
+.pos-cart-footer {
+  background-color: var(--surface-muted);
+  padding: 0.9rem 1rem 1rem;
+}
+
+.pos-discount-line {
+  color: var(--success-text);
+}
+
+.pos-total {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.35rem 0 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pos-total > span:first-child {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Desktop: o carrinho acompanha a rolagem e a área do meio rola sozinha. */
+@media (min-width: 992px) {
+  .pos-cart {
+    position: sticky;
+    top: 4.5rem; /* abaixo da barra superior */
+    max-height: calc(100vh - 6rem);
+  }
+
+  .pos-cart-body {
+    overflow-y: auto;
+  }
+}
+
+/* Desabilitado (carrinho vazio): cinza, para não parecer um botão verde "fraco" que deveria funcionar. */
+.pos-finish.btn:disabled {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.pos-finish.btn:disabled kbd {
+  background-color: transparent;
+  border-color: var(--border-strong);
+}

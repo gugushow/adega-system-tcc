@@ -1,0 +1,5 @@
+@AdegaSystem.Api_HostAddress = http://localhost:5080
+
+GET {{AdegaSystem.Api_HostAddress}}/health
+
+###
